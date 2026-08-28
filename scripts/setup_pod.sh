@@ -6,12 +6,19 @@ set -euo pipefail
 VENVS=/workspace/venvs
 ENV_SH=/workspace/env.sh
 
-echo "=== [1/5] apt packages ==="
+echo "=== [1/6] apt packages ==="
 export DEBIAN_FRONTEND=noninteractive
 apt-get update -qq
 apt-get install -y -qq git jq tmux curl ca-certificates
 
-echo "=== [2/5] env.sh ==="
+echo "=== [2/6] nsys ==="
+# Nsight Systems from the preconfigured CUDA apt repo (see docs/env/g0_notes.md).
+if ! command -v nsys >/dev/null 2>&1; then
+  apt-get install -y -qq nsight-systems-2026.1.3
+fi
+nsys --version
+
+echo "=== [3/6] env.sh ==="
 if [ ! -f "$ENV_SH" ]; then
   cat > "$ENV_SH" <<'EOF'
 # Shared environment for llm-inference-bench. Source this from all scripts.
@@ -28,14 +35,14 @@ fi
 source "$ENV_SH"
 mkdir -p "$HF_HOME"
 
-echo "=== [3/5] uv ==="
+echo "=== [4/6] uv ==="
 if ! command -v uv >/dev/null 2>&1; then
   curl -LsSf https://astral.sh/uv/install.sh | sh
 fi
 source "$ENV_SH"
 uv --version
 
-echo "=== [4/5] venvs ==="
+echo "=== [5/6] venvs ==="
 mkdir -p "$VENVS"
 for v in vllm sglang bench; do
   if [ ! -x "$VENVS/$v/bin/python" ]; then
@@ -43,11 +50,12 @@ for v in vllm sglang bench; do
   fi
 done
 
-echo "=== [5/5] packages ==="
-uv pip install --python "$VENVS/vllm/bin/python" vllm
-uv pip install --python "$VENVS/sglang/bin/python" "sglang[all]"
+echo "=== [6/6] packages ==="
+# Engine versions frozen at the G0-installed versions (docs/env/g0_versions.txt).
+uv pip install --python "$VENVS/vllm/bin/python" "vllm==0.28.0"
+uv pip install --python "$VENVS/sglang/bin/python" "sglang[all]==0.5.9"
 uv pip install --python "$VENVS/bench/bin/python" \
-  aiohttp numpy pandas matplotlib transformers \
+  aiohttp numpy pandas matplotlib transformers datasets \
   "huggingface_hub[cli,hf_transfer]" lm_eval ruff
 
 echo "setup_pod.sh: done"

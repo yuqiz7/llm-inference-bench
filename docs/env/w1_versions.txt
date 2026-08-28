@@ -1,0 +1,42 @@
+# W1 versions (captured 2026-08-28T20:32:27Z)
+
+## pip freeze extracts (venv: vllm)
+Using Python 3.12.3 environment at: /workspace/venvs/vllm
+torch==2.13.0
+transformers==5.16.1
+triton==3.7.1
+vllm==0.28.0
+
+## pip freeze extracts (venv: sglang)
+Using Python 3.12.3 environment at: /workspace/venvs/sglang
+sgl-kernel==0.3.21
+sglang==0.5.9
+torch==2.9.1
+transformers==4.57.1
+triton==3.5.1
+
+## pip freeze extracts (venv: bench)
+Using Python 3.12.3 environment at: /workspace/venvs/bench
+aiohttp==3.14.3
+datasets==5.0.1
+huggingface-hub==1.29.0
+lm-eval==0.4.12
+numpy==2.5.2
+pandas==3.0.5
+ruff==0.16.5
+transformers==5.16.1
+
+## nvidia-smi
+name, driver_version, memory.total [MiB]
+NVIDIA H100 80GB HBM3, 580.126.09, 81559 MiB
+
+## nvcc -V
+Cuda compilation tools, release 12.8, V12.8.93
+Build cuda_12.8.r12.8/compiler.35583870_0
+
+## nsys
+NVIDIA Nsight Systems version 2026.1.3.425-261338342291v0
+
+## Model downloads (du -sh)
+16G	/workspace/hf/hub/models--Qwen--Qwen3-8B
+30G	/workspace/hf/hub/models--deepseek-ai--DeepSeek-V2-Lite-Chat
