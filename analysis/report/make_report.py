@@ -430,7 +430,8 @@ def make_figures() -> None:
     if have_m3:
         axes[0].axhline(1.0, color="gray", linewidth=0.8, linestyle=":")
         axes[0].set_ylabel("Speedup vs baseline (output tok/s)")
-        axes[1].set_ylabel("Mean accepted tokens / step")
+        axes[1].set_ylabel("Acceptance (vllm: accepted draft tok/step;\n"
+                           "sglang: accept len incl. target token)")
         for ax in axes:
             ax.set_xscale("log", base=2)
             ax.set_xlabel("Concurrency")
