@@ -1,0 +1,14 @@
+# G0 smoke benchmark: single cell, vLLM defaults, Qwen3-8B.
+cell_id: g0_smoke_vllm_qwen3-8b
+engine: vllm
+model: Qwen/Qwen3-8B
+base_url: http://127.0.0.1:8000
+workload: random
+input_len: 1024
+output_len: 256
+concurrency: 8
+num_requests: 32
+warmup_requests: 8
+temperature: 0
+ignore_eos: true
+seed: 0

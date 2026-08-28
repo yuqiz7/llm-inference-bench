@@ -1,0 +1,15 @@
+# HF cache and venvs live outside the repo, but guard anyway
+hf/
+venvs/
+.venv/
+
+# Profiling artifacts
+*.nsys-rep
+*.sqlite
+
+# Python
+__pycache__/
+*.pyc
+*.egg-info/
+
+# note: results/raw and results/manifests ARE committed
