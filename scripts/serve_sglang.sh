@@ -7,7 +7,9 @@ source /workspace/env.sh
 
 MODEL="${1:-Qwen/Qwen3-8B}"
 [ $# -gt 0 ] && shift
-PORT="${PORT:-8001}"
+# Not 8001: the RunPod template's nginx (README proxy) already listens there
+# and answers health checks, masking a failed bind.
+PORT="${PORT:-30000}"
 LOG="${LOG:-/workspace/logs/sglang_server.log}"
 mkdir -p "$(dirname "$LOG")"
 

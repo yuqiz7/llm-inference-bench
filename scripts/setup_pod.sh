@@ -18,6 +18,10 @@ if [ ! -f "$ENV_SH" ]; then
 export HF_HOME=/workspace/hf
 export HF_HUB_ENABLE_HF_TRANSFER=1
 export PATH="$HOME/.local/bin:$PATH"
+# Package caches are disposable: keep them on the container overlay disk, not
+# the quota-limited /workspace network volume (~80 GB quota).
+export UV_CACHE_DIR=/root/.cache/uv
+export PIP_CACHE_DIR=/root/.cache/pip
 EOF
 fi
 # shellcheck source=/dev/null
