@@ -1,0 +1,9 @@
+{
+  "cell_id": "g0_sanity_sglang_qwen3-8b",
+  "gpu": "NVIDIA H100 80GB HBM3",
+  "driver": "580.126.09",
+  "engine": "sglang",
+  "engine_version": "0.5.9",
+  "launch_cmd": "python -m sglang.launch_server --model-path Qwen/Qwen3-8B --port 30000",
+  "captured_at": "2026-08-28T19:17:15Z"
+}

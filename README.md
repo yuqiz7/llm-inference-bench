@@ -29,7 +29,12 @@ Systems. Fairness rules and the full matrix are defined in
 ## Environment
 
 <!-- GEN:env -->
-_No manifests captured yet._
+| Cell | GPU | Driver | Engine | Version |
+|---|---|---|---|---|
+| g0_sanity_sglang_qwen3-8b | NVIDIA H100 80GB HBM3 | 580.126.09 | sglang | 0.5.9 |
+| g0_smoke_vllm_qwen3-8b | NVIDIA H100 80GB HBM3 | 580.126.09 | vllm | 0.28.0 |
+
+Source: `results/manifests/*.json`, rendered by `analysis/report/make_report.py`.
 <!-- /GEN:env -->
 
 ## G0 smoke benchmark
@@ -39,7 +44,13 @@ Single cell, engine defaults, config in
 result — a pipeline check only.
 
 <!-- GEN:g0_smoke -->
-_No G0 smoke results yet._
+Engine: **vllm**, model: **Qwen/Qwen3-8B**, random workload 1024 in / 256 out, greedy, ignore_eos.
+
+| Concurrency | N | TTFT p50 (ms) | TTFT p95 (ms) | TPOT p50 (ms) | TPOT p95 (ms) | Output tok/s |
+|---|---|---|---|---|---|---|
+| 8 | 32 | 245.4 | 271.7 | 7.1 | 7.6 | 991.6 |
+
+Source: `results/raw/g0_smoke_vllm_qwen3-8b.summary.json` (per-request data: `results/raw/g0_smoke_vllm_qwen3-8b.jsonl`), rendered by `analysis/report/make_report.py`.
 <!-- /GEN:g0_smoke -->
 
 ## Reproducing

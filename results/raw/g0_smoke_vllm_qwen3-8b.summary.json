@@ -1,0 +1,16 @@
+{
+  "cell_id": "g0_smoke_vllm_qwen3-8b",
+  "engine": "vllm",
+  "model": "Qwen/Qwen3-8B",
+  "concurrency": 8,
+  "num_requests": 32,
+  "input_len": 1024,
+  "output_len": 256,
+  "ttft_p50_ms": 245.42566761374474,
+  "ttft_p95_ms": 271.7291546985507,
+  "tpot_p50_ms": 7.106415715579892,
+  "tpot_p95_ms": 7.621807195976668,
+  "output_tok_per_s": 991.6238748784842,
+  "total_output_tokens": 8192,
+  "wall_time_s": 8.261196818202734
+}
