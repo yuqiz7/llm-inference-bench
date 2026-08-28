@@ -1,0 +1,9 @@
+{
+  "cell_id": "w1_m2_vllm_fp8wkv_c128",
+  "gpu": "NVIDIA H100 80GB HBM3",
+  "driver": "580.126.09",
+  "engine": "vllm",
+  "engine_version": "0.28.0",
+  "launch_cmd": "vllm serve Qwen/Qwen3-8B --port 8000 --quantization fp8 --kv-cache-dtype fp8",
+  "captured_at": "2026-08-28T21:21:06Z"
+}

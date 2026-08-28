@@ -31,8 +31,8 @@ Systems. Fairness rules and the full matrix are defined in
 <!-- GEN:env -->
 | GPU | Driver | Engine | Version | Cells |
 |---|---|---|---|---|
-| NVIDIA H100 80GB HBM3 | 580.126.09 | sglang | 0.5.9 | 10 |
-| NVIDIA H100 80GB HBM3 | 580.126.09 | vllm | 0.28.0 | 10 |
+| NVIDIA H100 80GB HBM3 | 580.126.09 | sglang | 0.5.9 | 19 |
+| NVIDIA H100 80GB HBM3 | 580.126.09 | vllm | 0.28.0 | 37 |
 
 Source: `results/manifests/*.json` (per-cell launch commands there), rendered by `analysis/report/make_report.py`.
 <!-- /GEN:env -->
@@ -103,17 +103,17 @@ live server (exact commands in `results/accuracy/`).
 <!-- GEN:w1_m2 -->
 Output tok/s by concurrency:
 
-| Concurrency | vLLM BF16 (M1) |
-|---|---|
-| 1 | 141.7 |
-| 2 | 282.8 |
-| 4 | 551.9 |
-| 8 | 1070.7 |
-| 16 | 1949.1 |
-| 32 | 3308.3 |
-| 64 | 4274.0 |
-| 128 | 4924.6 |
-| 256 | 4512.0 |
+| Concurrency | vLLM BF16 (M1) | vLLM FP8 weights | vLLM FP8 KV cache | vLLM FP8 weights+KV | SGLang FP8 weights |
+|---|---|---|---|---|---|
+| 1 | 141.7 | 210.1 | 141.0 | 205.1 | 195.8 |
+| 2 | 282.8 | 416.4 | 280.4 | 406.5 | 374.5 |
+| 4 | 551.9 | 798.2 | 548.3 | 791.2 | 712.8 |
+| 8 | 1070.7 | 1479.6 | 1059.6 | 1505.2 | 1309.4 |
+| 16 | 1949.1 | 2611.2 | 1982.4 | 2744.0 | 2350.5 |
+| 32 | 3308.3 | 4201.5 | 3465.0 | 4401.3 | 3879.8 |
+| 64 | 4274.0 | 5340.8 | 4620.0 | 5931.4 | 4985.3 |
+| 128 | 4924.6 | 5932.8 | 5352.0 | 6687.1 | 5446.0 |
+| 256 | 4512.0 | 5566.5 | 5503.3 | 6828.2 | 5114.8 |
 
 ![FP8 throughput](docs/figures/fig3_fp8.png)
 
@@ -122,6 +122,8 @@ Accuracy (lm-eval via the live server API; GSM8K 5-shot limit 500, MMLU limit 20
 | Config | GSM8K (strict) | Δ vs BF16 | MMLU | Δ vs BF16 |
 |---|---|---|---|---|
 | vLLM BF16 | 0.9080 | baseline | 0.7596 | baseline |
+| vLLM FP8 weights | 0.9020 | -0.0060 | 0.7649 | +0.0053 |
+| vLLM FP8 weights+KV | 0.8760 | -0.0320 | 0.7518 | -0.0079 |
 
 Source: `results/raw/w1_m2_*_c*.summary.json`, `results/accuracy/*.json`, rendered by `analysis/report/make_report.py`.
 <!-- /GEN:w1_m2 -->

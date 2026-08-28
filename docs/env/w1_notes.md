@@ -18,6 +18,22 @@
   (openai/gsm8k, main, 1319 questions), cycled deterministically by seed.
   `random` workload unchanged from G0.
 
+## M2 FP8 — route and observations
+
+- `lm_eval` needed the `[api]` extra (`tenacity`) to use `local-completions`;
+  fixed permanently in setup_pod.sh (`lm_eval[api]`). Not a version change.
+- MMLU loglikelihood DID work against the server API (vLLM /v1/completions
+  with echo+logprobs): 57 subtasks x 20 = 1140 samples per config. No
+  gsm8k-only fallback needed.
+- SGLang FP8 weights: online quantization (`--quantization fp8`) works on the
+  pinned 0.5.9 (server_args confirms `quantization='fp8'`), so the official
+  Qwen3-8B-FP8 checkpoint route was not needed and nothing extra was
+  downloaded.
+- Fairness note: both engines run with their defaults, which include prefix
+  caching (vLLM `enable_prefix_caching=True`, SGLang radix cache on). The
+  random workload has no cross-request prefix overlap, so this does not
+  inflate M1/M2 numbers.
+
 ## M3 speculative decoding — configuration decisions
 
 - vLLM ngram: vLLM 0.28.0 exposes no built-in default knobs

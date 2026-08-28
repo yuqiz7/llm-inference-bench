@@ -1,0 +1,17 @@
+{
+  "cell_id": "w1_m2_vllm_fp8w_c032",
+  "engine": "vllm",
+  "model": "Qwen/Qwen3-8B",
+  "concurrency": 32,
+  "num_requests": 64,
+  "workload": "random",
+  "input_len": 1024,
+  "output_len": 256,
+  "ttft_p50_ms": 187.16907547786832,
+  "ttft_p95_ms": 271.0533354897052,
+  "tpot_p50_ms": 6.758945435285568,
+  "tpot_p95_ms": 6.911974890595849,
+  "output_tok_per_s": 4201.5288436600185,
+  "total_output_tokens": 16384,
+  "wall_time_s": 3.899532910436392
+}

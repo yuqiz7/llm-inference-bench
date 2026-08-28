@@ -1,0 +1,17 @@
+{
+  "cell_id": "w1_m2_sglang_fp8w_c256",
+  "engine": "sglang",
+  "model": "Qwen/Qwen3-8B",
+  "concurrency": 256,
+  "num_requests": 512,
+  "workload": "random",
+  "input_len": 1024,
+  "output_len": 256,
+  "ttft_p50_ms": 4348.017616197467,
+  "ttft_p95_ms": 15198.044804437086,
+  "tpot_p50_ms": 16.007967017517956,
+  "tpot_p95_ms": 18.902232761987868,
+  "output_tok_per_s": 5114.7761732246445,
+  "total_output_tokens": 131072,
+  "wall_time_s": 25.62614580988884
+}
