@@ -1,0 +1,13 @@
+# W2 M4 base config: SGLang defaults, DeepSeek-V2-Lite-Chat (MoE/MLA), BF16,
+# random workload. concurrency/num_requests/cell_id are filled per cell by
+# bench/sweep.py.
+engine: sglang
+model: deepseek-ai/DeepSeek-V2-Lite-Chat
+base_url: http://127.0.0.1:30000
+workload: random
+input_len: 1024
+output_len: 256
+warmup_requests: 8
+temperature: 0
+ignore_eos: true
+seed: 0

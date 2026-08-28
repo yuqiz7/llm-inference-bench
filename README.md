@@ -196,6 +196,27 @@ Acceptance is reported only where the engine exposes counters or log lines.
 Source: `results/raw/w1_m3_*_c*.summary.json` and `results/raw/w1_m3_*_c*.accept.json` (acceptance shown only where the engine exposed counters/logs), rendered by `analysis/report/make_report.py`. Acceptance semantics differ per engine and are NOT comparable across rows: vLLM = accepted draft tokens per step from /metrics counter deltas (excludes the target-sampled bonus token); SGLang = mean log-reported accept length (includes the target-sampled token).
 <!-- /GEN:w1_m3 -->
 
+## W2 M4 — MoE model (DeepSeek-V2-Lite-Chat), TP=1
+
+BF16, engine defaults plus `--trust-remote-code`, single H100
+(`CUDA_VISIBLE_DEVICES=0`), full concurrency sweep (1–256), random workload
+1024 in / 256 out, greedy, ignore_eos — same fairness rules as W1 M1.
+Includes a single-cell FP8-KV-cache-on-MLA probe (vLLM only).
+
+<!-- GEN:w2_m4 -->
+_No M4 results yet._
+<!-- /GEN:w2_m4 -->
+
+## W2 M5 — TP=2 scaling (DeepSeek-V2-Lite-Chat, 2x H100)
+
+Same model, workload, and fairness rules as M4; `--tensor-parallel-size 2`
+(vLLM) / `--tp 2` (SGLang); concurrency subset {8, 32, 64, 128, 256}. TP1
+reference = the matching M4 cells from the same pod.
+
+<!-- GEN:w2_m5 -->
+_No M5 results yet._
+<!-- /GEN:w2_m5 -->
+
 ## Reproducing
 
 ```bash

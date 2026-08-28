@@ -46,6 +46,15 @@ M3_SERIES = {
     "sglang": [("baseline", "w1_m3_sglang_base"), ("ngram", "w1_m3_sglang_ngram"),
                ("EAGLE-3", "w1_m3_sglang_eagle3")],
 }
+M4_SERIES = [
+    ("vllm", "w2_m4_vllm"),
+    ("sglang", "w2_m4_sglang"),
+]
+M4_FP8KV_CELL = "w2_m4_vllm_fp8kv_c032"
+M5_SERIES = [
+    ("vllm", "w2_m4_vllm", "w2_m5_vllm_tp2"),
+    ("sglang", "w2_m4_sglang", "w2_m5_sglang_tp2"),
+]
 
 
 def load_series(prefix: str) -> dict[int, dict]:
@@ -315,6 +324,89 @@ def gen_w1_m3() -> str:
     return "\n".join(lines) + "\n"
 
 
+def gen_w2_m4() -> str:
+    blocks = []
+    any_data = False
+    for engine, prefix in M4_SERIES:
+        series = load_series(prefix)
+        if not series:
+            continue
+        any_data = True
+        blocks.append(f"**{engine}** (defaults, `--trust-remote-code`):")
+        blocks.append("")
+        blocks.extend(series_table(series))
+        blocks.append("")
+    if not any_data:
+        return "_No M4 results yet._\n"
+    fp8kv_path = RAW / f"{M4_FP8KV_CELL}.summary.json"
+    if fp8kv_path.exists():
+        s = json.loads(fp8kv_path.read_text())
+        blocks.append(
+            f"FP8 KV cache on MLA (vLLM `--kv-cache-dtype fp8`, single probe "
+            f"cell at C={s['concurrency']}): served and completed — "
+            f"TTFT p50 {s['ttft_p50_ms']:.1f} ms, TPOT p50 "
+            f"{s['tpot_p50_ms']:.2f} ms, {s['output_tok_per_s']:.1f} output "
+            f"tok/s (`results/raw/{M4_FP8KV_CELL}.summary.json`). Probe only; "
+            "not swept."
+        )
+    else:
+        blocks.append(
+            "FP8 KV cache on MLA (vLLM `--kv-cache-dtype fp8`): no probe cell "
+            "recorded; outcome in `docs/env/w2_notes.md`."
+        )
+    blocks.append("")
+    blocks.append("![MoE throughput and TP scaling](docs/figures/fig5_moe_tp.png)")
+    blocks.append("")
+    blocks.append(
+        "Source: `results/raw/w2_m4_*_c*.summary.json`, "
+        "rendered by `analysis/report/make_report.py`."
+    )
+    return "\n".join(blocks) + "\n"
+
+
+def gen_w2_m5() -> str:
+    present = []
+    for engine, tp1_prefix, tp2_prefix in M5_SERIES:
+        tp1 = load_series(tp1_prefix)
+        tp2 = load_series(tp2_prefix)
+        if tp2:
+            present.append((engine, tp1, tp2))
+    if not present:
+        return "_No M5 results yet._\n"
+    concs = sorted({c for _, _, tp2 in present for c in tp2})
+    header = "| Concurrency |"
+    sep = "|---|"
+    for engine, _, _ in present:
+        header += (f" {engine} TP1 tok/s | {engine} TP2 tok/s "
+                   "| scaling efficiency |")
+        sep += "---|---|---|"
+    lines = [
+        "Output tok/s, TP=2 vs TP=1 (TP1 = the matching M4 cells, same pod). "
+        "Scaling efficiency = TP2 / TP1 throughput; ideal 2.0.",
+        "",
+        header,
+        sep,
+    ]
+    for c in concs:
+        row = f"| {c} |"
+        for _, tp1, tp2 in present:
+            s1, s2 = tp1.get(c), tp2.get(c)
+            row += f" {s1['output_tok_per_s']:.1f} |" if s1 else " — |"
+            row += f" {s2['output_tok_per_s']:.1f} |" if s2 else " — |"
+            if s1 and s2:
+                row += f" {s2['output_tok_per_s'] / s1['output_tok_per_s']:.2f} |"
+            else:
+                row += " — |"
+        lines.append(row)
+    lines.append("")
+    lines.append(
+        "Source: `results/raw/w2_m5_*_tp2_c*.summary.json` vs "
+        "`results/raw/w2_m4_*_c*.summary.json`, rendered by "
+        "`analysis/report/make_report.py`."
+    )
+    return "\n".join(lines) + "\n"
+
+
 def replace_block(text: str, name: str, content: str) -> str:
     start = f"<!-- GEN:{name} -->"
     end = f"<!-- /GEN:{name} -->"
@@ -329,6 +421,8 @@ def render(text: str) -> str:
     text = replace_block(text, "w1_m1", gen_w1_m1())
     text = replace_block(text, "w1_m2", gen_w1_m2())
     text = replace_block(text, "w1_m3", gen_w1_m3())
+    text = replace_block(text, "w2_m4", gen_w2_m4())
+    text = replace_block(text, "w2_m5", gen_w2_m5())
     return text
 
 
@@ -445,6 +539,62 @@ def make_figures() -> None:
         fig.tight_layout()
         fig.savefig(FIGURES / "fig4_spec_decode.png", dpi=150)
     plt.close(fig)
+
+    # fig5: MoE (DeepSeek-V2-Lite-Chat) — M4 curves + TP2 vs TP1 bars
+    m4 = {eng: load_series(p) for eng, p in M4_SERIES}
+    m5 = [(eng, load_series(p1), load_series(p2)) for eng, p1, p2 in M5_SERIES]
+    if any(m4.values()):
+        fig, axes = plt.subplots(1, 2, figsize=(12, 4.5))
+        for eng, series in m4.items():
+            if not series:
+                continue
+            cs = sorted(series)
+            axes[0].plot(cs, [series[c]["output_tok_per_s"] for c in cs],
+                         marker="o", label=f"{eng} TP1")
+        axes[0].set_xscale("log", base=2)
+        axes[0].set_xlabel("Concurrency")
+        axes[0].set_ylabel("Output tok/s")
+        axes[0].set_title("M4: MoE throughput (TP=1)")
+        axes[0].grid(True, alpha=0.3)
+        axes[0].legend(fontsize=8)
+
+        have_m5 = [(eng, tp1, tp2) for eng, tp1, tp2 in m5 if tp1 and tp2]
+        if have_m5:
+            concs = sorted({c for _, _, tp2 in have_m5 for c in tp2})
+            import numpy as np
+            x = np.arange(len(concs))
+            n_bars = 2 * len(have_m5)
+            width = 0.8 / n_bars
+            for i, (eng, tp1, tp2) in enumerate(have_m5):
+                v1 = [tp1[c]["output_tok_per_s"] if c in tp1 else 0.0
+                      for c in concs]
+                v2 = [tp2[c]["output_tok_per_s"] if c in tp2 else 0.0
+                      for c in concs]
+                off = (2 * i - n_bars / 2 + 0.5) * width
+                axes[1].bar(x + off, v1, width, label=f"{eng} TP1")
+                bars = axes[1].bar(x + off + width, v2, width,
+                                   label=f"{eng} TP2")
+                for j, bar in enumerate(bars):
+                    if v1[j] > 0 and v2[j] > 0:
+                        axes[1].annotate(
+                            f"{v2[j] / v1[j]:.2f}x",
+                            (bar.get_x() + bar.get_width() / 2,
+                             bar.get_height()),
+                            ha="center", va="bottom", fontsize=7, rotation=90,
+                        )
+            axes[1].set_xticks(x)
+            axes[1].set_xticklabels([str(c) for c in concs])
+            axes[1].set_xlabel("Concurrency")
+            axes[1].set_ylabel("Output tok/s")
+            axes[1].set_title("M5: TP2 vs TP1 (labels = TP2/TP1)")
+            axes[1].grid(True, axis="y", alpha=0.3)
+            axes[1].legend(fontsize=8)
+        else:
+            axes[1].set_axis_off()
+        fig.suptitle("DeepSeek-V2-Lite-Chat BF16, random 1024in/256out (H100)")
+        fig.tight_layout()
+        fig.savefig(FIGURES / "fig5_moe_tp.png", dpi=150)
+        plt.close(fig)
     print("figures regenerated in docs/figures/")
 
 
