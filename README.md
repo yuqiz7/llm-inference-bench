@@ -31,8 +31,8 @@ Systems. Fairness rules and the full matrix are defined in
 <!-- GEN:env -->
 | GPU | Driver | Engine | Version | Cells |
 |---|---|---|---|---|
-| NVIDIA H100 80GB HBM3 | 580.126.09 | sglang | 0.5.9 | 1 |
-| NVIDIA H100 80GB HBM3 | 580.126.09 | vllm | 0.28.0 | 1 |
+| NVIDIA H100 80GB HBM3 | 580.126.09 | sglang | 0.5.9 | 10 |
+| NVIDIA H100 80GB HBM3 | 580.126.09 | vllm | 0.28.0 | 10 |
 
 Source: `results/manifests/*.json` (per-cell launch commands there), rendered by `analysis/report/make_report.py`.
 <!-- /GEN:env -->
@@ -60,7 +60,39 @@ workload 1024 in / 256 out, greedy, ignore_eos. Driven by
 [bench/sweep.py](bench/sweep.py).
 
 <!-- GEN:w1_m1 -->
-_No M1 results yet._
+**vllm** (defaults):
+
+| Concurrency | N | TTFT p50 (ms) | TTFT p95 (ms) | TPOT p50 (ms) | TPOT p95 (ms) | Output tok/s |
+|---|---|---|---|---|---|---|
+| 1 | 64 | 70.0 | 89.5 | 6.77 | 7.00 | 141.7 |
+| 2 | 64 | 68.3 | 74.8 | 6.82 | 6.83 | 282.8 |
+| 4 | 64 | 78.4 | 86.3 | 6.98 | 7.01 | 551.9 |
+| 8 | 64 | 101.3 | 127.8 | 7.07 | 7.14 | 1070.7 |
+| 16 | 64 | 127.9 | 181.6 | 7.64 | 7.74 | 1949.1 |
+| 32 | 64 | 187.2 | 282.4 | 8.66 | 8.91 | 3308.3 |
+| 64 | 128 | 398.0 | 564.6 | 13.05 | 15.82 | 4274.0 |
+| 128 | 256 | 500.2 | 5801.0 | 18.19 | 20.71 | 4924.6 |
+| 256 | 512 | 848.8 | 20945.7 | 20.00 | 22.19 | 4512.0 |
+
+**sglang** (defaults):
+
+| Concurrency | N | TTFT p50 (ms) | TTFT p95 (ms) | TPOT p50 (ms) | TPOT p95 (ms) | Output tok/s |
+|---|---|---|---|---|---|---|
+| 1 | 64 | 44.6 | 53.5 | 7.01 | 7.03 | 139.7 |
+| 2 | 64 | 38.2 | 47.7 | 7.19 | 7.22 | 273.2 |
+| 4 | 64 | 56.1 | 72.0 | 7.37 | 7.42 | 529.0 |
+| 8 | 64 | 69.1 | 85.3 | 7.71 | 7.79 | 1003.9 |
+| 16 | 64 | 96.8 | 130.1 | 8.34 | 8.49 | 1828.9 |
+| 32 | 64 | 184.4 | 247.7 | 9.41 | 9.66 | 3131.3 |
+| 64 | 128 | 410.4 | 1426.6 | 12.06 | 16.60 | 4087.5 |
+| 128 | 256 | 622.3 | 6454.1 | 15.26 | 20.36 | 4571.6 |
+| 256 | 512 | 4797.4 | 19015.8 | 17.90 | 22.96 | 4218.4 |
+
+![Throughput vs concurrency](docs/figures/fig1_throughput_concurrency.png)
+
+![Latency vs concurrency](docs/figures/fig2_latency_concurrency.png)
+
+Source: `results/raw/w1_m1_*_c*.summary.json`, rendered by `analysis/report/make_report.py`.
 <!-- /GEN:w1_m1 -->
 
 ## W1 M2 — FP8 variants + accuracy regression
@@ -69,7 +101,29 @@ FP8 weight and KV-cache quantization sweeps, plus lm-eval accuracy against the
 live server (exact commands in `results/accuracy/`).
 
 <!-- GEN:w1_m2 -->
-_No M2 results yet._
+Output tok/s by concurrency:
+
+| Concurrency | vLLM BF16 (M1) |
+|---|---|
+| 1 | 141.7 |
+| 2 | 282.8 |
+| 4 | 551.9 |
+| 8 | 1070.7 |
+| 16 | 1949.1 |
+| 32 | 3308.3 |
+| 64 | 4274.0 |
+| 128 | 4924.6 |
+| 256 | 4512.0 |
+
+![FP8 throughput](docs/figures/fig3_fp8.png)
+
+Accuracy (lm-eval via the live server API; GSM8K 5-shot limit 500, MMLU limit 20/subtask):
+
+| Config | GSM8K (strict) | Δ vs BF16 | MMLU | Δ vs BF16 |
+|---|---|---|---|---|
+| vLLM BF16 | 0.9080 | baseline | 0.7596 | baseline |
+
+Source: `results/raw/w1_m2_*_c*.summary.json`, `results/accuracy/*.json`, rendered by `analysis/report/make_report.py`.
 <!-- /GEN:w1_m2 -->
 
 ## W1 M3 — Speculative decoding

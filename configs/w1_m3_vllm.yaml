@@ -1,0 +1,11 @@
+# W1 M3 base config: vLLM, Qwen3-8B, nat workload (GSM8K questions), greedy.
+# concurrency/num_requests/cell_id are filled per cell by bench/sweep.py.
+engine: vllm
+model: Qwen/Qwen3-8B
+base_url: http://127.0.0.1:8000
+workload: nat
+output_len: 256
+warmup_requests: 8
+temperature: 0
+ignore_eos: true
+seed: 0

@@ -56,6 +56,6 @@ uv pip install --python "$VENVS/vllm/bin/python" "vllm==0.28.0"
 uv pip install --python "$VENVS/sglang/bin/python" "sglang[all]==0.5.9"
 uv pip install --python "$VENVS/bench/bin/python" \
   aiohttp numpy pandas matplotlib transformers datasets \
-  "huggingface_hub[cli,hf_transfer]" lm_eval ruff
+  "huggingface_hub[cli,hf_transfer]" "lm_eval[api]" ruff
 
 echo "setup_pod.sh: done"

@@ -39,7 +39,8 @@ ACC_CONFIGS = [
 M3_SERIES = {
     "vllm": [("baseline", "w1_m3_vllm_base"), ("ngram", "w1_m3_vllm_ngram"),
              ("EAGLE-3", "w1_m3_vllm_eagle3")],
-    "sglang": [("baseline", "w1_m3_sglang_base"), ("EAGLE-3", "w1_m3_sglang_eagle3")],
+    "sglang": [("baseline", "w1_m3_sglang_base"), ("ngram", "w1_m3_sglang_ngram"),
+               ("EAGLE-3", "w1_m3_sglang_eagle3")],
 }
 
 
@@ -202,12 +203,14 @@ def gen_w1_m2() -> str:
 
 
 def accuracy_metrics(stem: str) -> dict[str, float]:
-    """Extract task accuracies from an lm-eval results json in results/accuracy/."""
-    path = ACCURACY / f"{stem}.json"
-    if not path.exists():
-        return {}
-    data = json.loads(path.read_text())
-    results = data.get("results", {})
+    """Extract task accuracies from lm-eval results jsons in results/accuracy/.
+
+    Merges <stem>.json, <stem>_gsm8k.json, <stem>_mmlu.json (whichever exist)."""
+    results: dict = {}
+    for path in (ACCURACY / f"{stem}.json", ACCURACY / f"{stem}_gsm8k.json",
+                 ACCURACY / f"{stem}_mmlu.json"):
+        if path.exists():
+            results.update(json.loads(path.read_text()).get("results", {}))
     out: dict[str, float] = {}
     gsm = results.get("gsm8k", {})
     for key in ("exact_match,strict-match", "exact_match,flexible-extract"):
