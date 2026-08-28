@@ -19,11 +19,24 @@ Systems. Fairness rules and the full matrix are defined in
 - First smoke benchmark: vLLM + Qwen3-8B, one cell (results below).
 - SGLang sanity check: server launched, one completion returned HTTP 200.
 
+### DONE (W1, 2026-08-28) — two-engine dense matrix (vLLM 0.28.0 / SGLang 0.5.9, Qwen3-8B, H100)
+
+- Concurrency sweep driver ([bench/sweep.py](bench/sweep.py)) with per-cell
+  manifests and speculative-decoding acceptance capture; "nat" workload
+  (GSM8K question texts via the `datasets` library).
+- M1: BF16 throughput/latency curves, both engines, concurrency 1–256.
+- M2: FP8 sweeps (vLLM fp8 weights / fp8 KV / both; SGLang fp8 online quant)
+  plus lm-eval accuracy regression (GSM8K 5-shot n=500, MMLU 20/subtask)
+  for vLLM BF16 / fp8-weights / fp8-weights+KV via the live server API.
+- M3: speculative decoding (vLLM ngram + EAGLE-3, SGLang NGRAM + EAGLE3)
+  with acceptance analysis and greedy-consistency spot checks.
+- Decisions and caveats: [docs/env/w1_notes.md](docs/env/w1_notes.md).
+
 ### PLANNED
 
-- Benchmark matrix M1–M6 (baselines, FP8 weights, FP8 KV cache + accuracy,
-  speculative decoding, TP=2 scaling, Nsight attribution) — see the scope doc.
-- TensorRT-LLM engine integration.
+- MoE model (DeepSeek-V2-Lite-Chat) matrix; TP=2 scaling (M5); Nsight
+  attribution (M6) — see the scope doc.
+- TensorRT-LLM engine integration (separate pod).
 - Nsight Systems profiling (nsys) runs.
 
 ## Environment
