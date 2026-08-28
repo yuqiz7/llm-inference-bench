@@ -1,7 +1,11 @@
 """Closed-loop streaming benchmark client for OpenAI-compatible /v1/completions.
 
-Keeps exactly C requests in flight. Prompts are per-request random token ids
-sampled with the model tokenizer (per-request seed) and decoded to text.
+Keeps exactly C requests in flight. Workloads:
+- "random" (default): per-request random token ids sampled with the model
+  tokenizer (per-request seed) and decoded to text.
+- "nat": natural-language prompts = GSM8K test-split question texts loaded via
+  the `datasets` library (no fabricated text); requests cycle through the
+  dataset deterministically from the config seed.
 Writes per-request records to results/raw/<cell_id>.jsonl and an aggregate
 summary to results/raw/<cell_id>.summary.json.
 """
@@ -18,6 +22,21 @@ import yaml
 from transformers import AutoTokenizer
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
+
+
+def load_nat_prompts() -> list[str]:
+    """GSM8K test-split question texts, in dataset order."""
+    from datasets import load_dataset
+
+    ds = load_dataset("openai/gsm8k", "main", split="test")
+    return list(ds["question"])
+
+
+def pick_prompt(cfg: dict, tokenizer, nat_prompts: list[str] | None, seed: int) -> str:
+    if cfg.get("workload", "random") == "nat":
+        assert nat_prompts, "nat workload requires loaded GSM8K prompts"
+        return nat_prompts[seed % len(nat_prompts)]
+    return make_prompt(tokenizer, cfg["input_len"], seed)
 
 
 def make_prompt(tokenizer, input_len: int, seed: int) -> str:
@@ -74,7 +93,13 @@ async def run_one(session: aiohttp.ClientSession, cfg: dict, prompt: str) -> dic
     }
 
 
-async def run_phase(cfg: dict, tokenizer, n_requests: int, seed_offset: int) -> list[dict]:
+async def run_phase(
+    cfg: dict,
+    tokenizer,
+    n_requests: int,
+    seed_offset: int,
+    nat_prompts: list[str] | None = None,
+) -> list[dict]:
     """Closed loop: C workers each pull the next request index until exhausted."""
     results: list[dict | None] = [None] * n_requests
     next_idx = 0
@@ -91,8 +116,8 @@ async def run_phase(cfg: dict, tokenizer, n_requests: int, seed_offset: int) -> 
                         return
                     idx = next_idx
                     next_idx += 1
-                prompt = make_prompt(
-                    tokenizer, cfg["input_len"], cfg["seed"] + seed_offset + idx
+                prompt = pick_prompt(
+                    cfg, tokenizer, nat_prompts, cfg["seed"] + seed_offset + idx
                 )
                 results[idx] = await run_one(session, cfg, prompt)
 
@@ -118,7 +143,8 @@ def summarize(cfg: dict, records: list[dict], wall_s: float) -> dict:
         "model": cfg["model"],
         "concurrency": cfg["concurrency"],
         "num_requests": len(records),
-        "input_len": cfg["input_len"],
+        "workload": cfg.get("workload", "random"),
+        "input_len": cfg.get("input_len"),
         "output_len": cfg["output_len"],
         "ttft_p50_ms": float(np.percentile(ttft_ms, 50)),
         "ttft_p95_ms": float(np.percentile(ttft_ms, 95)),
@@ -137,14 +163,19 @@ async def main() -> None:
     cfg = yaml.safe_load(Path(args.config).read_text())
 
     tokenizer = AutoTokenizer.from_pretrained(cfg["model"])
+    nat_prompts = (
+        load_nat_prompts() if cfg.get("workload", "random") == "nat" else None
+    )
 
     warmup = cfg.get("warmup_requests", 8)
     print(f"[client] warmup: {warmup} requests at concurrency {cfg['concurrency']}")
-    await run_phase(cfg, tokenizer, warmup, seed_offset=1_000_000)
+    await run_phase(cfg, tokenizer, warmup, seed_offset=1_000_000, nat_prompts=nat_prompts)
 
     print(f"[client] measuring: {cfg['num_requests']} requests")
     t0 = time.perf_counter()
-    records = await run_phase(cfg, tokenizer, cfg["num_requests"], seed_offset=0)
+    records = await run_phase(
+        cfg, tokenizer, cfg["num_requests"], seed_offset=0, nat_prompts=nat_prompts
+    )
     wall_s = time.perf_counter() - t0
 
     raw_dir = REPO_ROOT / "results" / "raw"
