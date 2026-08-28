@@ -23,7 +23,11 @@ FIGURES = REPO_ROOT / "docs" / "figures"
 
 G0_SMOKE_CELL = "g0_smoke_vllm_qwen3-8b"
 
-M1_SERIES = [("vllm", "w1_m1_vllm"), ("sglang", "w1_m1_sglang")]
+M1_SERIES = [
+    ("vllm", "w1_m1_vllm"),
+    ("sglang", "w1_m1_sglang"),
+    ("trtllm", "w1_m1_trtllm"),
+]
 M2_SERIES = [
     ("vLLM BF16 (M1)", "w1_m1_vllm"),
     ("vLLM FP8 weights", "w1_m2_vllm_fp8w"),

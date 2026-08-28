@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Capture the run environment for one benchmark cell.
-# Usage: env_capture.sh <cell_id> <engine: vllm|sglang> <launch command...>
+# Usage: env_capture.sh <cell_id> <engine: vllm|sglang|trtllm> <launch command...>
 set -euo pipefail
 source /workspace/env.sh
 
@@ -15,11 +15,17 @@ mkdir -p "$OUT_DIR"
 
 GPU_NAME="$(nvidia-smi --query-gpu=name --format=csv,noheader | head -1)"
 DRIVER="$(nvidia-smi --query-gpu=driver_version --format=csv,noheader | head -1)"
-ENGINE_VERSION="$(/workspace/venvs/$ENGINE/bin/python - "$ENGINE" <<'EOF'
+if [ "$ENGINE" = "trtllm" ]; then
+  # TensorRT-LLM ships in the NGC container's system Python (no venv); read the
+  # version from package metadata to avoid the heavyweight MPI-touching import.
+  ENGINE_VERSION="$(python3 -c 'from importlib.metadata import version; print(version("tensorrt_llm"))')"
+else
+  ENGINE_VERSION="$(/workspace/venvs/$ENGINE/bin/python - "$ENGINE" <<'EOF'
 import importlib, sys
 print(importlib.import_module(sys.argv[1]).__version__)
 EOF
 )"
+fi
 
 jq -n \
   --arg cell_id "$CELL_ID" \

@@ -1,0 +1,17 @@
+{
+  "cell_id": "w1_m1_trtllm_c016",
+  "engine": "trtllm",
+  "model": "Qwen/Qwen3-8B",
+  "concurrency": 16,
+  "num_requests": 64,
+  "workload": "random",
+  "input_len": 1024,
+  "output_len": 256,
+  "ttft_p50_ms": 105.98691459745169,
+  "ttft_p95_ms": 235.98448634147644,
+  "tpot_p50_ms": 8.349562629911246,
+  "tpot_p95_ms": 8.431816463742186,
+  "output_tok_per_s": 1802.1096126382135,
+  "total_output_tokens": 16384,
+  "wall_time_s": 9.09156684204936
+}

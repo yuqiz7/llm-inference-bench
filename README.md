@@ -32,11 +32,21 @@ Systems. Fairness rules and the full matrix are defined in
   with acceptance analysis and greedy-consistency spot checks.
 - Decisions and caveats: [docs/env/w1_notes.md](docs/env/w1_notes.md).
 
+### DONE (W1 TRT-LLM arm, 2026-08-28) — third engine on the M1 matrix (TensorRT-LLM 1.2.1, Qwen3-8B, H100)
+
+- Separate pod: NVIDIA NGC TensorRT-LLM release container (system install,
+  versions in [docs/env/w1_trtllm_versions.txt](docs/env/w1_trtllm_versions.txt)).
+- `trtllm-serve` OpenAI-compatible endpoint, PyTorch backend, engine defaults,
+  no offline engine build ([scripts/serve_trtllm.sh](scripts/serve_trtllm.sh)).
+- M1: BF16 throughput/latency curves, concurrency 1–256, same workload and
+  fairness rules as vLLM/SGLang (random 1024in/256out, greedy, ignore_eos);
+  cells `w1_m1_trtllm_c*` in the M1 table and fig1/fig2 below.
+
 ### PLANNED
 
 - MoE model (DeepSeek-V2-Lite-Chat) matrix; TP=2 scaling (M5); Nsight
   attribution (M6) — see the scope doc.
-- TensorRT-LLM engine integration (separate pod).
+- TensorRT-LLM on the remaining W1 milestones (FP8, speculative decoding).
 - Nsight Systems profiling (nsys) runs.
 
 ## Environment
@@ -45,6 +55,7 @@ Systems. Fairness rules and the full matrix are defined in
 | GPU | Driver | Engine | Version | Cells |
 |---|---|---|---|---|
 | NVIDIA H100 80GB HBM3 | 580.126.09 | sglang | 0.5.9 | 31 |
+| NVIDIA H100 80GB HBM3 | 580.126.09 | trtllm | 1.2.1 | 9 |
 | NVIDIA H100 80GB HBM3 | 580.126.09 | vllm | 0.28.0 | 49 |
 
 Source: `results/manifests/*.json` (per-cell launch commands there), rendered by `analysis/report/make_report.py`.
@@ -100,6 +111,20 @@ workload 1024 in / 256 out, greedy, ignore_eos. Driven by
 | 64 | 128 | 410.4 | 1426.6 | 12.06 | 16.60 | 4087.5 |
 | 128 | 256 | 622.3 | 6454.1 | 15.26 | 20.36 | 4571.6 |
 | 256 | 512 | 4797.4 | 19015.8 | 17.90 | 22.96 | 4218.4 |
+
+**trtllm** (defaults):
+
+| Concurrency | N | TTFT p50 (ms) | TTFT p95 (ms) | TPOT p50 (ms) | TPOT p95 (ms) | Output tok/s |
+|---|---|---|---|---|---|---|
+| 1 | 64 | 59.0 | 63.8 | 6.96 | 6.99 | 139.3 |
+| 2 | 64 | 61.6 | 71.5 | 7.33 | 7.35 | 264.6 |
+| 4 | 64 | 66.5 | 75.3 | 7.59 | 7.61 | 511.1 |
+| 8 | 64 | 80.1 | 112.8 | 7.80 | 7.83 | 987.5 |
+| 16 | 64 | 106.0 | 236.0 | 8.35 | 8.43 | 1802.1 |
+| 32 | 64 | 260.0 | 356.6 | 9.33 | 9.50 | 3074.8 |
+| 64 | 128 | 594.6 | 923.8 | 12.72 | 16.56 | 4052.3 |
+| 128 | 256 | 800.7 | 12877.2 | 22.19 | 25.82 | 3570.3 |
+| 256 | 512 | 894.9 | 28339.7 | 25.51 | 27.61 | 3525.7 |
 
 ![Throughput vs concurrency](docs/figures/fig1_throughput_concurrency.png)
 
