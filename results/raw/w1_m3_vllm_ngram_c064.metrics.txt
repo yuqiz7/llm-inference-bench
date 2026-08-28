@@ -1,0 +1,28 @@
+# HELP vllm:spec_decode_num_drafts_total Number of spec decoding drafts.
+# TYPE vllm:spec_decode_num_drafts_total counter
+vllm:spec_decode_num_drafts_total{engine="0",model_name="Qwen/Qwen3-8B"} 20834.0
+# HELP vllm:spec_decode_num_drafts_created Number of spec decoding drafts.
+# TYPE vllm:spec_decode_num_drafts_created gauge
+vllm:spec_decode_num_drafts_created{engine="0",model_name="Qwen/Qwen3-8B"} 1.787952948265381e+09
+# HELP vllm:spec_decode_num_draft_tokens_total Number of draft tokens.
+# TYPE vllm:spec_decode_num_draft_tokens_total counter
+vllm:spec_decode_num_draft_tokens_total{engine="0",model_name="Qwen/Qwen3-8B"} 62483.0
+# HELP vllm:spec_decode_num_draft_tokens_created Number of draft tokens.
+# TYPE vllm:spec_decode_num_draft_tokens_created gauge
+vllm:spec_decode_num_draft_tokens_created{engine="0",model_name="Qwen/Qwen3-8B"} 1.7879529482654192e+09
+# HELP vllm:spec_decode_num_accepted_tokens_total Number of accepted tokens.
+# TYPE vllm:spec_decode_num_accepted_tokens_total counter
+vllm:spec_decode_num_accepted_tokens_total{engine="0",model_name="Qwen/Qwen3-8B"} 21325.0
+# HELP vllm:spec_decode_num_accepted_tokens_created Number of accepted tokens.
+# TYPE vllm:spec_decode_num_accepted_tokens_created gauge
+vllm:spec_decode_num_accepted_tokens_created{engine="0",model_name="Qwen/Qwen3-8B"} 1.7879529482654426e+09
+# HELP vllm:spec_decode_num_accepted_tokens_per_pos_total Accepted tokens per draft position.
+# TYPE vllm:spec_decode_num_accepted_tokens_per_pos_total counter
+vllm:spec_decode_num_accepted_tokens_per_pos_total{engine="0",model_name="Qwen/Qwen3-8B",position="0"} 10907.0
+vllm:spec_decode_num_accepted_tokens_per_pos_total{engine="0",model_name="Qwen/Qwen3-8B",position="1"} 6362.0
+vllm:spec_decode_num_accepted_tokens_per_pos_total{engine="0",model_name="Qwen/Qwen3-8B",position="2"} 4056.0
+# HELP vllm:spec_decode_num_accepted_tokens_per_pos_created Accepted tokens per draft position.
+# TYPE vllm:spec_decode_num_accepted_tokens_per_pos_created gauge
+vllm:spec_decode_num_accepted_tokens_per_pos_created{engine="0",model_name="Qwen/Qwen3-8B",position="0"} 1.7879529482654696e+09
+vllm:spec_decode_num_accepted_tokens_per_pos_created{engine="0",model_name="Qwen/Qwen3-8B",position="1"} 1.7879529482654781e+09
+vllm:spec_decode_num_accepted_tokens_per_pos_created{engine="0",model_name="Qwen/Qwen3-8B",position="2"} 1.787952948265485e+09

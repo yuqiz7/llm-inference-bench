@@ -1,0 +1,17 @@
+{
+  "cell_id": "w1_m3_vllm_ngram_c064",
+  "engine": "vllm",
+  "model": "Qwen/Qwen3-8B",
+  "concurrency": 64,
+  "num_requests": 128,
+  "workload": "nat",
+  "input_len": null,
+  "output_len": 256,
+  "ttft_p50_ms": 80.20041743293405,
+  "ttft_p95_ms": 176.19128613732755,
+  "tpot_p50_ms": 9.336046436253715,
+  "tpot_p95_ms": 10.27041646122348,
+  "output_tok_per_s": 6156.293636865062,
+  "total_output_tokens": 32768,
+  "wall_time_s": 5.322683083824813
+}

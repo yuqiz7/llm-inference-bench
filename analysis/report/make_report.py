@@ -302,7 +302,11 @@ def gen_w1_m3() -> str:
     lines.append(
         "Source: `results/raw/w1_m3_*_c*.summary.json` and "
         "`results/raw/w1_m3_*_c*.accept.json` (acceptance shown only where the "
-        "engine exposed counters/logs), rendered by `analysis/report/make_report.py`."
+        "engine exposed counters/logs), rendered by `analysis/report/make_report.py`. "
+        "Acceptance semantics differ per engine and are NOT comparable across rows: "
+        "vLLM = accepted draft tokens per step from /metrics counter deltas "
+        "(excludes the target-sampled bonus token); SGLang = mean log-reported "
+        "accept length (includes the target-sampled token)."
     )
     return "\n".join(lines) + "\n"
 

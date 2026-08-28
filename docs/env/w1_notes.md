@@ -49,4 +49,26 @@
   (steps 6, topk 10, draft tokens 32) was NOT run — it targets single-request
   latency and would confound the batch sweep.
 - SGLang 0.5.9 *does* expose an ngram mode (`--speculative-algorithm NGRAM`
-  per `--help`), so an SGLang ngram arm is included in M3.
+  per `--help`), so an SGLang ngram arm is included in M3
+  (`--speculative-num-draft-tokens 4`, other ngram knobs at their built-in
+  defaults: min/max match window 1/12, BFS breadth 1/10, branch length 18).
+
+- Caveat on ngram arms: the nat workload cycles the same 1319 GSM8K
+  questions across warmup and cells, so ngram/lookahead caches (SGLang's
+  global NGRAM cache, capacity 1e7) accumulate matching continuations over
+  the run. This flatters ngram acceptance relative to a cold cache /
+  unseen-prompt setting. Both engines' arms and their baselines see the same
+  prompt-repetition pattern, so within-engine speedup ratios remain fair.
+
+## M3 greedy-consistency spot check (recorded as-is)
+
+- vLLM EAGLE-3 vs vLLM baseline, C=1, first 3 nat prompts: all 3 outputs
+  DIVERGED (first divergence at chars 628 / 48 / 516;
+  `results/raw/w1_m3_vllm_greedy_compare.json` has the contexts). The
+  divergences are single-token flips at near-tie points that then cascade
+  (e.g. "100 bolts" vs "50 bolts" as the continuation of the same sentence).
+  Consistent with batched-verify float nondeterminism under greedy; both
+  continuations are locally plausible. Not hidden or corrected — reported
+  exactly as measured.
+- SGLang EAGLE3 vs SGLang baseline, same protocol: all 3 outputs IDENTICAL
+  (`results/raw/w1_m3_sglang_greedy_compare.json`).

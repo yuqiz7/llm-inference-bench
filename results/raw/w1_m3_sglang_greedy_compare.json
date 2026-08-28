@@ -1,0 +1,18 @@
+{
+  "a": "results/raw/w1_m3_sglang_greedy_base.json",
+  "b": "results/raw/w1_m3_sglang_greedy_eagle3.json",
+  "comparison": [
+    {
+      "prompt_index": 0,
+      "identical": true
+    },
+    {
+      "prompt_index": 1,
+      "identical": true
+    },
+    {
+      "prompt_index": 2,
+      "identical": true
+    }
+  ]
+}

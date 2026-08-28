@@ -1,0 +1,17 @@
+{
+  "cell_id": "w1_m3_vllm_eagle3_c008",
+  "engine": "vllm",
+  "model": "Qwen/Qwen3-8B",
+  "concurrency": 8,
+  "num_requests": 64,
+  "workload": "nat",
+  "input_len": null,
+  "output_len": 256,
+  "ttft_p50_ms": 26.286924723535776,
+  "ttft_p95_ms": 52.392116375267506,
+  "tpot_p50_ms": 3.2986931009765934,
+  "tpot_p95_ms": 3.745155015083797,
+  "output_tok_per_s": 2263.3640817135883,
+  "total_output_tokens": 16384,
+  "wall_time_s": 7.238782364875078
+}

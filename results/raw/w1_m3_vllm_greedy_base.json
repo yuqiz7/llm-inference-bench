@@ -1,0 +1,21 @@
+{
+  "base_url": "http://127.0.0.1:8000",
+  "model": "Qwen/Qwen3-8B",
+  "outputs": [
+    {
+      "prompt_index": 0,
+      "prompt": "Janet\u2019s ducks lay 16 eggs per day. She eats three for breakfast every morning and bakes muffins for her friends every day with four. She sells the remainder at the farmers' market daily for $2 per fresh duck egg. How much in dollars does she make every day at the farmers' market?",
+      "text": " Let's break down the problem step by step to find out how much Janet makes at the farmers' market each day.\n\nFirst, we know that Janet's ducks lay 16 eggs per day. So, the total number of eggs she has each day is 16.\n\nNext, we need to account for the eggs Janet uses for her own consumption and for baking muffins. She eats 3 eggs for breakfast every morning, and she uses 4 eggs to bake muffins for her friends each day. So, the total number of eggs she uses each day is:\n\n3 (for breakfast) + 4 (for muffins) = 7 eggs.\n\nNow, we subtract the number of eggs she uses from the total number of eggs laid to find out how many eggs she has left to sell at the farmers' market:\n\n16 (total eggs) - 7 (used eggs) = 9 eggs.\n\nEach of these remaining eggs is sold at the farmers' market for $2 per egg. To find out her daily earnings from the market, we multiply the number of eggs she sells by the price per egg:\n\n9 eggs * $2/egg = $18.\n\nTherefore, Janet makes $18 every day at the farmers' market. This"
+    },
+    {
+      "prompt_index": 1,
+      "prompt": "A robe takes 2 bolts of blue fiber and half that much white fiber.  How many bolts in total does it take?",
+      "text": "  If a merchant has 100 bolts of blue fiber and 100 bolts of white fiber, how many robes can he make?\n\nTo solve this problem, we need to determine two things:\n\n1. How many bolts of each fiber are required to make one robe.\n2. How many robes can be made with the given quantities of blue and white fibers.\n\nLet's break it down step by step.\n\n### Step 1: Determine the fiber requirements per robe\n- A robe requires **2 bolts of blue fiber**.\n- A robe requires **half that much white fiber**, which is **1 bolt of white fiber**.\n\nSo, for one robe, the total number of bolts required is:\n$$\n2 \\text{ (blue)} + 1 \\text{ (white)} = 3 \\text{ bolts}\n$$\n\n### Step 2: Determine how many robes can be made with the given quantities\nThe merchant has:\n- **100 bolts of blue fiber**\n- **100 bolts of white fiber**\n\nWe need to find out how many robes can be made, considering both the blue and white fibers are required in a fixed ratio.\n\nLet\u2019s denote the number of robes as $ x $.\n\nEach robe requires:\n- "
+    },
+    {
+      "prompt_index": 2,
+      "prompt": "Josh decides to try flipping a house.  He buys a house for $80,000 and then puts in $50,000 in repairs.  This increased the value of the house by 150%.  How much profit did he make?",
+      "text": "  (Profit is calculated as selling price minus cost price)\n\nTo determine Josh's profit, we need to follow these steps:\n\n1. **Calculate the original value of the house after repairs:**\n   - The original cost of the house is $80,000.\n   - Josh spent $50,000 on repairs.\n   - The total cost price is the sum of the original cost and the repair cost: $80,000 + $50,000 = $130,000.\n\n2. **Determine the increased value of the house:**\n   - The value of the house increased by 150% due to the repairs.\n   - A 150% increase means the value of the house is now 100% (original value) + 150% (increase) = 250% of the original value.\n   - The original value of the house is $80,000.\n   - Therefore, the new value of the house is 250% of $80,000.\n\n3. **Calculate the selling price:**\n   - Selling price = 250% of $80"
+    }
+  ]
+}

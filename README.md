@@ -31,8 +31,8 @@ Systems. Fairness rules and the full matrix are defined in
 <!-- GEN:env -->
 | GPU | Driver | Engine | Version | Cells |
 |---|---|---|---|---|
-| NVIDIA H100 80GB HBM3 | 580.126.09 | sglang | 0.5.9 | 19 |
-| NVIDIA H100 80GB HBM3 | 580.126.09 | vllm | 0.28.0 | 37 |
+| NVIDIA H100 80GB HBM3 | 580.126.09 | sglang | 0.5.9 | 31 |
+| NVIDIA H100 80GB HBM3 | 580.126.09 | vllm | 0.28.0 | 49 |
 
 Source: `results/manifests/*.json` (per-cell launch commands there), rendered by `analysis/report/make_report.py`.
 <!-- /GEN:env -->
@@ -135,7 +135,27 @@ question texts), greedy, 256 out, ignore_eos, concurrency {1, 8, 32, 64}.
 Acceptance is reported only where the engine exposes counters or log lines.
 
 <!-- GEN:w1_m3 -->
-_No M3 results yet._
+**vllm** (nat workload = GSM8K questions, greedy, 256 out, ignore_eos):
+
+| Concurrency | baseline tok/s | ngram tok/s | speedup | accepted/step | EAGLE-3 tok/s | speedup | accepted/step |
+|---|---|---|---|---|---|---|---|
+| 1 | 147.1 | 153.3 | 1.04x | 1.03 | 296.0 | 2.01x | 1.37 |
+| 8 | 1129.9 | 1103.8 | 0.98x | 1.03 | 2263.4 | 2.00x | 1.37 |
+| 32 | 4164.3 | 3613.3 | 0.87x | 1.04 | 7027.6 | 1.69x | 1.38 |
+| 64 | 7393.3 | 6156.3 | 0.83x | 1.01 | 11692.6 | 1.58x | 1.39 |
+
+**sglang** (nat workload = GSM8K questions, greedy, 256 out, ignore_eos):
+
+| Concurrency | baseline tok/s | ngram tok/s | speedup | accepted/step | EAGLE-3 tok/s | speedup | accepted/step |
+|---|---|---|---|---|---|---|---|
+| 1 | 142.7 | 168.8 | 1.18x | 1.53 | 226.8 | 1.59x | 2.22 |
+| 8 | 1083.5 | 1830.3 | 1.69x | 2.84 | 1557.5 | 1.44x | 2.23 |
+| 32 | 3977.6 | 3686.7 | 0.93x | 2.87 | 4177.5 | 1.05x | 2.22 |
+| 64 | 7202.6 | 3900.5 | 0.54x | 2.35 | 5655.6 | 0.79x | 2.23 |
+
+![Speculative decoding](docs/figures/fig4_spec_decode.png)
+
+Source: `results/raw/w1_m3_*_c*.summary.json` and `results/raw/w1_m3_*_c*.accept.json` (acceptance shown only where the engine exposed counters/logs), rendered by `analysis/report/make_report.py`. Acceptance semantics differ per engine and are NOT comparable across rows: vLLM = accepted draft tokens per step from /metrics counter deltas (excludes the target-sampled bonus token); SGLang = mean log-reported accept length (includes the target-sampled token).
 <!-- /GEN:w1_m3 -->
 
 ## Reproducing

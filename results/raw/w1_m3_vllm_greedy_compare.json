@@ -1,0 +1,27 @@
+{
+  "a": "results/raw/w1_m3_vllm_greedy_base.json",
+  "b": "results/raw/w1_m3_vllm_greedy_eagle3.json",
+  "comparison": [
+    {
+      "prompt_index": 0,
+      "identical": false,
+      "first_divergence_char": 628,
+      "a_context": " of eggs laid to find out how many eggs she has left to sell at the farmers' mar",
+      "b_context": " of eggs laid to find out how many eggs are left for the farmers' market:\n\n16 (t"
+    },
+    {
+      "prompt_index": 1,
+      "identical": false,
+      "first_divergence_char": 48,
+      "a_context": "erchant has 100 bolts of blue fiber and 100 bolts of white fiber, how many robes",
+      "b_context": "erchant has 100 bolts of blue fiber and 50 bolts of white fiber, how many robes "
+    },
+    {
+      "prompt_index": 2,
+      "identical": false,
+      "first_divergence_char": 516,
+      "a_context": "ue to the repairs.\n   - A 150% increase means the value of the house is now 100%",
+      "b_context": "ue to the repairs.\n   - A 150% increase on the original value of the house (befo"
+    }
+  ]
+}

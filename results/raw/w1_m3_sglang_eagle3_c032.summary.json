@@ -1,0 +1,17 @@
+{
+  "cell_id": "w1_m3_sglang_eagle3_c032",
+  "engine": "sglang",
+  "model": "Qwen/Qwen3-8B",
+  "concurrency": 32,
+  "num_requests": 64,
+  "workload": "nat",
+  "input_len": null,
+  "output_len": 256,
+  "ttft_p50_ms": 64.67720726504922,
+  "ttft_p95_ms": 96.49299625307322,
+  "tpot_p50_ms": 6.423309878172244,
+  "tpot_p95_ms": 7.815534680643502,
+  "output_tok_per_s": 4177.484298745326,
+  "total_output_tokens": 16384,
+  "wall_time_s": 3.921977637335658
+}

@@ -1,0 +1,38 @@
+{
+  "cell_id": "w1_m3_vllm_eagle3_c064",
+  "source": "vllm /metrics counter deltas (before vs after measured phase; warmup requests are included in 'before')",
+  "counters_before": {
+    "vllm:spec_decode_num_drafts_total": 23601.0,
+    "vllm:spec_decode_num_drafts_created": 1787953236.0257487,
+    "vllm:spec_decode_num_draft_tokens_total": 70803.0,
+    "vllm:spec_decode_num_draft_tokens_created": 1787953236.0257862,
+    "vllm:spec_decode_num_accepted_tokens_total": 32455.0,
+    "vllm:spec_decode_num_accepted_tokens_created": 1787953236.0258105,
+    "vllm:spec_decode_num_accepted_tokens_per_pos_total": 32455.0,
+    "vllm:spec_decode_num_accepted_tokens_per_pos_created": 5363859708.07846
+  },
+  "counters_after": {
+    "vllm:spec_decode_num_drafts_total": 38196.0,
+    "vllm:spec_decode_num_drafts_created": 1787953236.0257487,
+    "vllm:spec_decode_num_draft_tokens_total": 114588.0,
+    "vllm:spec_decode_num_draft_tokens_created": 1787953236.0257862,
+    "vllm:spec_decode_num_accepted_tokens_total": 52698.0,
+    "vllm:spec_decode_num_accepted_tokens_created": 1787953236.0258105,
+    "vllm:spec_decode_num_accepted_tokens_per_pos_total": 52698.0,
+    "vllm:spec_decode_num_accepted_tokens_per_pos_created": 5363859708.07846
+  },
+  "counters_delta": {
+    "vllm:spec_decode_num_drafts_total": 14595.0,
+    "vllm:spec_decode_num_drafts_created": 0.0,
+    "vllm:spec_decode_num_draft_tokens_total": 43785.0,
+    "vllm:spec_decode_num_draft_tokens_created": 0.0,
+    "vllm:spec_decode_num_accepted_tokens_total": 20243.0,
+    "vllm:spec_decode_num_accepted_tokens_created": 0.0,
+    "vllm:spec_decode_num_accepted_tokens_per_pos_total": 20243.0,
+    "vllm:spec_decode_num_accepted_tokens_per_pos_created": 0.0
+  },
+  "derived": {
+    "mean_accepted_tokens_per_step": 1.386981843096951,
+    "acceptance_rate_per_draft_token": 0.462327281032317
+  }
+}
