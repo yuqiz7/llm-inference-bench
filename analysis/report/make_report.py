@@ -381,8 +381,10 @@ def gen_w2_m5() -> str:
                    "| scaling efficiency |")
         sep += "---|---|---|"
     lines = [
-        "Output tok/s, TP=2 vs TP=1 (TP1 = the matching M4 cells, same pod). "
-        "Scaling efficiency = TP2 / TP1 throughput; ideal 2.0.",
+        (
+            "Output tok/s, TP=2 vs TP=1 (TP1 = the matching M4 cells, same pod). "
+            "Scaling efficiency = TP2 / TP1 throughput; ideal 2.0."
+        ),
         "",
         header,
         sep,
