@@ -42,12 +42,26 @@ Systems. Fairness rules and the full matrix are defined in
   fairness rules as vLLM/SGLang (random 1024in/256out, greedy, ignore_eos);
   cells `w1_m1_trtllm_c*` in the M1 table and fig1/fig2 below.
 
+### DONE (W2, 2026-08-29) — MoE matrix (DeepSeek-V2-Lite-Chat, 2x H100 SXM pod)
+
+- M4: BF16 throughput/latency curves for the MoE model, vLLM + SGLang,
+  TP=1 (single GPU), full concurrency sweep 1–256; plus a single-cell
+  FP8-KV-cache-on-MLA probe (vLLM: supported on 0.28.0, no throughput win
+  at C=32).
+- M5: TP=2 vs TP=1 scaling on the same pod, concurrency {8–256}: vLLM
+  1.16–1.37x, SGLang 1.14–1.44x (ideal 2.0) — communication-bound for this
+  small MoE (~2.4B active params).
+- nsys: one 60 s steady-state capture of vLLM TP=2 at c32 under load
+  (`results/nsys/`): communication = 22.0% of GPU kernel time (28.7%
+  including the fused allreduce+RMSNorm kernel); only AllGather uses NCCL
+  kernels proper (2.6%) — TP allreduce goes through flashinfer's custom
+  two-shot kernel.
+- Decisions and caveats: [docs/env/w2_notes.md](docs/env/w2_notes.md).
+
 ### PLANNED
 
-- MoE model (DeepSeek-V2-Lite-Chat) matrix; TP=2 scaling (M5); Nsight
-  attribution (M6) — see the scope doc.
-- TensorRT-LLM on the remaining W1 milestones (FP8, speculative decoding).
-- Nsight Systems profiling (nsys) runs.
+- TensorRT-LLM on the remaining milestones (FP8, speculative decoding, MoE).
+- Remaining Nsight attribution (M6) cells — TP=1 captures, host-gap analysis.
 
 ## Environment
 
