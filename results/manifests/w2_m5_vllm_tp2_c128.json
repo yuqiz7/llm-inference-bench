@@ -1,0 +1,9 @@
+{
+  "cell_id": "w2_m5_vllm_tp2_c128",
+  "gpu": "NVIDIA H100 80GB HBM3",
+  "driver": "580.126.09",
+  "engine": "vllm",
+  "engine_version": "0.28.0",
+  "launch_cmd": "vllm serve deepseek-ai/DeepSeek-V2-Lite-Chat --port 8000 --trust-remote-code --tensor-parallel-size 2",
+  "captured_at": "2026-08-29T00:28:42Z"
+}

@@ -1,0 +1,9 @@
+{
+  "cell_id": "w2_m5_sglang_tp2_c008",
+  "gpu": "NVIDIA H100 80GB HBM3",
+  "driver": "580.126.09",
+  "engine": "sglang",
+  "engine_version": "0.5.9",
+  "launch_cmd": "python -m sglang.launch_server --model-path deepseek-ai/DeepSeek-V2-Lite-Chat --port 30000 --trust-remote-code --tp 2",
+  "captured_at": "2026-08-29T00:46:15Z"
+}

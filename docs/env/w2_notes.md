@@ -41,4 +41,39 @@
 
 ## M5 — TP=2 scaling
 
-(to be filled during the run)
+- Same model/workload/fairness as M4; TP1 reference = the M4 cells from this
+  same pod. Levels {8, 32, 64, 128, 256} only.
+- Both GPUs verified back to 0 MiB between every server (vLLM TP1 sweep,
+  vLLM fp8-kv probe, SGLang TP1 sweep, vLLM TP2, nsys relaunch, SGLang TP2).
+
+### Scaling finding
+
+- TP=2 scaling is far from ideal (2.0) for this small MoE, as anticipated:
+  vLLM 1.16–1.37x, SGLang 1.14–1.44x across the measured levels. With only
+  ~2.4B active params per token, per-GPU compute per layer is small relative
+  to the per-layer allreduce cost, and the 22–29% communication share
+  measured below is consistent with that. TP=2 does cut TPOT p50
+  substantially at low/mid concurrency (e.g. vLLM c8: 6.23 -> 4.77 ms), so
+  it buys latency more than throughput here.
+
+### nsys capture — vLLM TP=2, c32 under load (NCCL/communication share)
+
+- One 60 s steady-state window: server relaunched under
+  `nsys profile --trace=cuda,nvtx --delay 420 --duration 60`; continuous
+  closed-loop c32 load (same workload generator) started at health and ran
+  ~94 s before the window opened. Report:
+  `results/nsys/w2_m5_vllm_tp2_c032.nsys-rep` (71 MB); kernel table export:
+  `results/nsys/w2_m5_vllm_tp2_c032_cuda_gpu_kern_sum.txt`.
+- Communication share of GPU kernel time in the window (from
+  `cuda_gpu_kern_sum`, total kernel time 21.66 s across both GPUs):
+  - `flashinfer::trtllm_mnnvl_allreduce::twoshotAllreduceKernel`: **19.4%**
+    — vLLM 0.28 routes TP allreduce through this custom kernel, not NCCL.
+  - `ncclDevKernel_AllGather_RING_LL`: **2.6%** — the only true NCCL kernel
+    in the window.
+  - Plain communication total: **22.0%**. Adding the fused
+    `trtllm_mnnvl_allreduce::rmsNormLamport` kernel (allreduce+RMSNorm
+    fusion, comm and norm not separable): 6.7% more → **28.7%** upper bound.
+- Top compute kernel for comparison: `fused_moe_kernel` at 30.5%. So at c32,
+  TP=2 spends roughly a fifth to a quarter of GPU kernel time on
+  communication — consistent with the measured ~1.2–1.4x (not 2.0x)
+  scaling for this small MoE.

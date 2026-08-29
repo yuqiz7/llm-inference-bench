@@ -54,9 +54,9 @@ Systems. Fairness rules and the full matrix are defined in
 <!-- GEN:env -->
 | GPU | Driver | Engine | Version | Cells |
 |---|---|---|---|---|
-| NVIDIA H100 80GB HBM3 | 580.126.09 | sglang | 0.5.9 | 40 |
+| NVIDIA H100 80GB HBM3 | 580.126.09 | sglang | 0.5.9 | 45 |
 | NVIDIA H100 80GB HBM3 | 580.126.09 | trtllm | 1.2.1 | 9 |
-| NVIDIA H100 80GB HBM3 | 580.126.09 | vllm | 0.28.0 | 59 |
+| NVIDIA H100 80GB HBM3 | 580.126.09 | vllm | 0.28.0 | 64 |
 
 Source: `results/manifests/*.json` (per-cell launch commands there), rendered by `analysis/report/make_report.py`.
 <!-- /GEN:env -->
@@ -246,7 +246,17 @@ Same model, workload, and fairness rules as M4; `--tensor-parallel-size 2`
 reference = the matching M4 cells from the same pod.
 
 <!-- GEN:w2_m5 -->
-_No M5 results yet._
+Output tok/s, TP=2 vs TP=1 (TP1 = the matching M4 cells, same pod). Scaling efficiency = TP2 / TP1 throughput; ideal 2.0.
+
+| Concurrency | vllm TP1 tok/s | vllm TP2 tok/s | scaling efficiency | sglang TP1 tok/s | sglang TP2 tok/s | scaling efficiency |
+|---|---|---|---|---|---|---|
+| 8 | 1261.8 | 1534.5 | 1.22 | 1059.2 | 1356.3 | 1.28 |
+| 32 | 3383.2 | 4625.6 | 1.37 | 2780.4 | 3160.9 | 1.14 |
+| 64 | 4684.4 | 5412.4 | 1.16 | 4116.1 | 5697.0 | 1.38 |
+| 128 | 5815.5 | 7020.5 | 1.21 | 4632.0 | 6661.6 | 1.44 |
+| 256 | 6064.4 | 7349.6 | 1.21 | 4687.6 | 6691.4 | 1.43 |
+
+Source: `results/raw/w2_m5_*_tp2_c*.summary.json` vs `results/raw/w2_m4_*_c*.summary.json`, rendered by `analysis/report/make_report.py`.
 <!-- /GEN:w2_m5 -->
 
 ## Reproducing
