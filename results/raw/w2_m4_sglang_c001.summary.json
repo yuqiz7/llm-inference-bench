@@ -1,0 +1,17 @@
+{
+  "cell_id": "w2_m4_sglang_c001",
+  "engine": "sglang",
+  "model": "deepseek-ai/DeepSeek-V2-Lite-Chat",
+  "concurrency": 1,
+  "num_requests": 64,
+  "workload": "random",
+  "input_len": 1024,
+  "output_len": 256,
+  "ttft_p50_ms": 55.25803193449974,
+  "ttft_p95_ms": 68.05718671530485,
+  "tpot_p50_ms": 3.948991548489122,
+  "tpot_p95_ms": 3.9698623442182353,
+  "output_tok_per_s": 240.89320736080904,
+  "total_output_tokens": 16384,
+  "wall_time_s": 68.01354085281491
+}

@@ -54,9 +54,9 @@ Systems. Fairness rules and the full matrix are defined in
 <!-- GEN:env -->
 | GPU | Driver | Engine | Version | Cells |
 |---|---|---|---|---|
-| NVIDIA H100 80GB HBM3 | 580.126.09 | sglang | 0.5.9 | 31 |
+| NVIDIA H100 80GB HBM3 | 580.126.09 | sglang | 0.5.9 | 40 |
 | NVIDIA H100 80GB HBM3 | 580.126.09 | trtllm | 1.2.1 | 9 |
-| NVIDIA H100 80GB HBM3 | 580.126.09 | vllm | 0.28.0 | 49 |
+| NVIDIA H100 80GB HBM3 | 580.126.09 | vllm | 0.28.0 | 59 |
 
 Source: `results/manifests/*.json` (per-cell launch commands there), rendered by `analysis/report/make_report.py`.
 <!-- /GEN:env -->
@@ -204,7 +204,39 @@ BF16, engine defaults plus `--trust-remote-code`, single H100
 Includes a single-cell FP8-KV-cache-on-MLA probe (vLLM only).
 
 <!-- GEN:w2_m4 -->
-_No M4 results yet._
+**vllm** (defaults, `--trust-remote-code`):
+
+| Concurrency | N | TTFT p50 (ms) | TTFT p95 (ms) | TPOT p50 (ms) | TPOT p95 (ms) | Output tok/s |
+|---|---|---|---|---|---|---|
+| 1 | 64 | 80.4 | 94.7 | 3.30 | 3.31 | 276.8 |
+| 2 | 64 | 48.7 | 71.2 | 4.04 | 4.11 | 474.4 |
+| 4 | 64 | 36.5 | 47.6 | 5.09 | 5.42 | 767.5 |
+| 8 | 64 | 39.5 | 72.9 | 6.23 | 6.52 | 1261.8 |
+| 16 | 64 | 44.5 | 88.6 | 7.57 | 7.76 | 2071.5 |
+| 32 | 64 | 79.1 | 172.9 | 9.03 | 9.11 | 3383.2 |
+| 64 | 128 | 166.5 | 436.0 | 12.57 | 14.29 | 4684.4 |
+| 128 | 256 | 344.3 | 4475.2 | 15.14 | 16.64 | 5815.5 |
+| 256 | 512 | 522.5 | 15573.6 | 14.93 | 16.24 | 6064.4 |
+
+**sglang** (defaults, `--trust-remote-code`):
+
+| Concurrency | N | TTFT p50 (ms) | TTFT p95 (ms) | TPOT p50 (ms) | TPOT p95 (ms) | Output tok/s |
+|---|---|---|---|---|---|---|
+| 1 | 64 | 55.3 | 68.1 | 3.95 | 3.97 | 240.9 |
+| 2 | 64 | 81.2 | 89.0 | 4.70 | 4.81 | 401.8 |
+| 4 | 64 | 80.0 | 86.1 | 5.92 | 6.16 | 649.0 |
+| 8 | 64 | 111.7 | 121.0 | 7.19 | 7.51 | 1059.2 |
+| 16 | 64 | 137.8 | 815.5 | 8.94 | 9.08 | 1589.0 |
+| 32 | 64 | 199.3 | 220.3 | 10.71 | 10.89 | 2780.4 |
+| 64 | 128 | 364.8 | 1157.0 | 12.95 | 15.61 | 4116.1 |
+| 128 | 256 | 547.4 | 6042.8 | 16.76 | 19.42 | 4632.0 |
+| 256 | 512 | 5881.4 | 15843.4 | 17.53 | 20.83 | 4687.6 |
+
+FP8 KV cache on MLA (vLLM `--kv-cache-dtype fp8`, single probe cell at C=32): served and completed — TTFT p50 453.3 ms, TPOT p50 9.46 ms, 2826.7 output tok/s (`results/raw/w2_m4_vllm_fp8kv_c032.summary.json`). Probe only; not swept.
+
+![MoE throughput and TP scaling](docs/figures/fig5_moe_tp.png)
+
+Source: `results/raw/w2_m4_*_c*.summary.json`, rendered by `analysis/report/make_report.py`.
 <!-- /GEN:w2_m4 -->
 
 ## W2 M5 — TP=2 scaling (DeepSeek-V2-Lite-Chat, 2x H100)

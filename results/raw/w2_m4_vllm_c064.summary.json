@@ -1,0 +1,17 @@
+{
+  "cell_id": "w2_m4_vllm_c064",
+  "engine": "vllm",
+  "model": "deepseek-ai/DeepSeek-V2-Lite-Chat",
+  "concurrency": 64,
+  "num_requests": 128,
+  "workload": "random",
+  "input_len": 1024,
+  "output_len": 256,
+  "ttft_p50_ms": 166.5182951837778,
+  "ttft_p95_ms": 435.9628614038229,
+  "tpot_p50_ms": 12.569199013067227,
+  "tpot_p95_ms": 14.287194848498878,
+  "output_tok_per_s": 4684.422724041517,
+  "total_output_tokens": 32768,
+  "wall_time_s": 6.995098847895861
+}
